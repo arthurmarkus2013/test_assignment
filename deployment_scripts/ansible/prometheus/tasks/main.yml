@@ -1,0 +1,85 @@
+---
+- name: Get web app url
+  vars_prompt:
+    - name: web_app_url
+      prompt: What is the URL of the deployed web app?
+      private: false
+
+- name: Create group for prometheus
+  ansible.builtin.group:
+    name: prometheus
+    state: present
+
+- name: Create a user for prometheus
+  ansible.builtin.user:
+    name: prometheus
+    group: prometheus
+    create_home: false
+    shell: /bin/false
+
+- name: Create prometheus config folder
+  ansible.builtin.file:
+    path: /etc/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: "0644"
+
+- name: Create prometheus data folder
+  ansible.builtin.file:
+    path: /var/lib/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: "0644"
+
+- name: Download prometheus archive
+  ansible.builtin.get_url:
+    url: https://github.com/prometheus/prometheus/releases/download/v3.5.0/prometheus-3.5.0.linux-amd64.tar.gz
+    dest: /tmp/prometheus.tar.gz
+    mode: "0644"
+
+- name: Extract prometheus archive
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: /tmp/prometheus.tar.gz
+    dest: /tmp/prometheus
+
+- name: Move prometheus executable
+  ansible.builtin.copy:
+    src: /tmp/prometheus/prometheus
+    dest: /usr/local/bin/prometheus
+    owner: prometheus
+    group: prometheus
+    mode: "0755"
+
+- name: Move promtool cli utility
+  ansible.builtin.copy:
+    src: /tmp/prometheus/promtool
+    dest: /usr/local/bin/promtool
+    owner: prometheus
+    group: prometheus
+    mode: "0755"
+
+- name: Generate prometheus config file
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: prometheus
+    group: prometheus
+    mode: "0644"
+
+- name: Copy prometheus systemd file
+  ansible.builtin.copy:
+    src: /tmp/prometheus/prometheus.service
+    dest: /etc/systemd/system/prometheus.service
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Enable prometheus service
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    name: prometheus
+    state: started
+    enabled: true
