@@ -86,6 +86,7 @@ resource "aws_instance" "bastion_server" {
     ami           = "ami-034568121cfdea9c3"
     instance_type = "t3.micro"
     subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 2)
+    associate_public_ip_address = true
 
     tags = {
       Name = "bastion_server"
