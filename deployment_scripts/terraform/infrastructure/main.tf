@@ -28,6 +28,25 @@ resource "aws_subnet" "test_assignment_subnet" {
     }    
 }
 
+resource "aws_security_group" "test_assignment_sg" {
+    name = "allow outside access"
+    description = "allow outside access to ec2 instances inside assosiated vpc"
+    vpc_id = aws_vpc.test_assignment_vpc.id
+
+    tags = {
+      "name" = "test_assignment_sg"
+      "project" = "Test Assignment"
+    }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "vpc_sg_ingress_rule" {
+    ip_protocol = "tcp"
+    security_group_id = aws_security_group.test_assignment_sg.id
+    cidr_ipv4 = element(aws_subnet.test_assignment_subnet.*.cidr_block, 1)
+    from_port = 80
+    to_port = 80
+}
+
 resource "aws_instance" "prometheus_server" {
   ami           = "ami-034568121cfdea9c3"
   instance_type = "t3.micro"
