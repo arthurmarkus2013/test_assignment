@@ -32,7 +32,17 @@ resource "aws_route_table" "test_assignment_route_table" {
     vpc_id = aws_vpc.test_assignment_vpc.id
 
     route {
-        cidr_block = aws_vpc.test_assignment_vpc.cidr_block
+        cidr_block = element(aws_subnet.test_assignment_subnet.*.cidr_block, 0)
+        gateway_id = aws_internet_gateway.igw.id
+    }
+
+    route {
+        cidr_block = element(aws_subnet.test_assignment_subnet.*.cidr_block, 1)
+        gateway_id = aws_internet_gateway.igw.id
+    }
+
+    route {
+        cidr_block = element(aws_subnet.test_assignment_subnet.*.cidr_block, 2)
         gateway_id = aws_internet_gateway.igw.id
     }
 
