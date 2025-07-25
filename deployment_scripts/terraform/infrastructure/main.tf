@@ -18,7 +18,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_subnet" "test_assignment_subnet" {
     vpc_id = aws_vpc.test_assignment_vpc.id
-    count = 3
+    count = 2
     cidr_block = cidrsubnet("10.0.2.0/16", 8, count.index)
     availability_zone = join("", ["${var.aws_region}", "${var.availability_zones[count.index]}"])
 
@@ -44,7 +44,7 @@ resource "aws_route_table" "test_assignment_route_table" {
 
 resource "aws_route_table_association" "test_assignment_route_table_association" {
     route_table_id = aws_route_table.test_assignment_route_table.id
-    count = 3
+    count = 2
     subnet_id = element(aws_subnet.test_assignment_subnet.*.id, count.index)
     
     depends_on = [ aws_route_table.test_assignment_route_table ]
@@ -93,22 +93,11 @@ resource "aws_vpc_security_group_ingress_rule" "vpc_sg_ssm_ingress_rule" {
     to_port = 443
 }
 
-resource "aws_key_pair" "ec2_key_pair" {
-    key_name = "ec2_key_pair"
-    public_key = file("~/.ssh/id_rsa.pub")
-    
-    tags = {
-      Name = "ec2_key_pair"
-      Project = "Test Assignment"
-    }
-}
-
 resource "aws_instance" "prometheus_server" {
   ami           = "ami-034568121cfdea9c3"
   instance_type = "t3.micro"
   subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 0)
   associate_public_ip_address = true
-  key_name = aws_key_pair.ec2_key_pair.key_name
 
   tags = {
     Name = "prometheus_server",
@@ -120,7 +109,6 @@ resource "aws_instance" "k3s_server" {
     ami           = "ami-034568121cfdea9c3"
     instance_type = "t3.micro"
     subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 1)
-    key_name = aws_key_pair.ec2_key_pair.key_name
 
     tags = {
         Name = "k3s_server",
@@ -137,18 +125,5 @@ resource "aws_eip" "k3s_server_eip" {
     tags = {
         Name = "k3s_server_eip",
         Project = "Test Assignment"
-    }
-}
-
-resource "aws_instance" "bastion_server" {
-    ami           = "ami-034568121cfdea9c3"
-    instance_type = "t3.micro"
-    subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 2)
-    associate_public_ip_address = true
-    key_name = aws_key_pair.ec2_key_pair.key_name
-
-    tags = {
-      Name = "bastion_server"
-      Project = "Test Assignment"
     }
 }
