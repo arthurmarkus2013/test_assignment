@@ -51,28 +51,33 @@ resource "aws_route_table_association" "test_assignment_route_table_association"
 }
 
 resource "aws_security_group" "test_assignment_sg" {
-    name = "allow outside access"
-    description = "allow outside access to ec2 instances inside assosiated vpc"
+    name = "test_assignment_sg"
     vpc_id = aws_vpc.test_assignment_vpc.id
 
     ingress = [
         {
-            cidr_blocks = [ element(aws_subnet.test_assignment_subnet.*.cidr_block, 0) ]
+            cidr_blocks = [ "10.0.0.0/16" ]
             from_port = 9090
             protocol = "tcp"
             to_port = 9090
         },
         {
-            cidr_blocks = [ element(aws_subnet.test_assignment_subnet.*.cidr_block, 1) ]
+            cidr_blocks = [ "0.0.0.0/0" ]
             from_port = 80
             protocol = "tcp"
             to_port = 80
         },
         {
-            cidr_blocks = [ aws_subnet.test_assignment_subnet.*.cidr_block ]
+            cidr_blocks = [ "10.0.0.0/16" ]
             from_port = 22
             protocol = "tcp"
             to_port = 22
+        },
+        {
+            cidr_blocks = [ "10.0.0.0/16" ]
+            from_port = 6443
+            protocol = "tcp"
+            to_port = 6443
         }
     ]
 
@@ -138,4 +143,15 @@ resource "aws_instance" "bastion_server" {
         Name = "bastion_server",
         Project = "Test Assignment"
     }
+}
+
+resource "aws_ec2_instance_connect_endpoint" "ec2_connect_endpoint" {
+    subnet_id = element(aws_subnet.test_assignment_subnet.*.id, 2)
+    vpc_id = aws_vpc.test_assignment_vpc.id
+    security_group_ids = [ aws_security_group.test_assignment_sg.id ]
+
+    tags = {
+        Name = "ec2_connect_endpoint",
+        Project = "Test Assignment"
+    }    
 }
