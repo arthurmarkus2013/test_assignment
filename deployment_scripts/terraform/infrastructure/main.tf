@@ -78,7 +78,7 @@ resource "aws_vpc_security_group_ingress_rule" "web_server_sg_ingress_rule" {
 
 resource "aws_vpc_security_group_ingress_rule" "ssh_sg_ingress_rule" {
     ip_protocol = "tcp"
-    cidr_ipv4 = "10.0.0.0/16"
+    cidr_ipv4 = "0.0.0.0/0"
     security_group_id = aws_security_group.test_assignment_sg.id
     from_port = 22
     to_port = 22    
