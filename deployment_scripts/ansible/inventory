@@ -1,2 +1,5 @@
 [prometheus]
 localhost
+
+[k3s]
+localhost

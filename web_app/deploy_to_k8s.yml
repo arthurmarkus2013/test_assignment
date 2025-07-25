@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: simple-web-app
-        image: <Image>
+        image: public.ecr.aws/s7t4s4g1/arthur-markus/main-repository:latest
         resources:
           requests:
             memory: "128Mi"

@@ -1,0 +1,63 @@
+---
+- name: Create group for k3s
+  ansible.builtin.group:
+    name: k3s
+    state: present
+
+- name: Create a user for k3s
+  ansible.builtin.user:
+    name: k3s
+    group: k3s
+    create_home: false
+    shell: /bin/false
+
+- name: Create k3s config folder
+  ansible.builtin.file:
+    path: /etc/rancher/k3s/
+    state: directory
+    owner: k3s
+    group: k3s
+    mode: "0755"
+
+- name: Download K3s
+  ansible.builtin.get_url:
+    url: https://github.com/k3s-io/k3s/releases/download/v1.33.1%2Bk3s1/k3s
+    dest: /tmp/k3s
+    mode: "0755"
+
+- name: Move k3s executable
+  ansible.builtin.copy:
+    src: /tmp/k3s
+    dest: /usr/local/bin/k3s
+    owner: k3s
+    group: k3s
+    mode: "0755"
+
+- name: Copy k3s config file
+  ansible.builtin.copy:
+    src: config.yaml
+    dest: /etc/rancher/k3s/config.yaml
+    owner: k3s
+    group: k3s
+    mode: "0644"
+
+- name: Copy k3s systemd file
+  ansible.builtin.copy:
+    src: k3s.service
+    dest: /etc/systemd/system/k3s.service
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Enable k3s service
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    name: k3s
+    state: started
+    enabled: true
+
+- name: Fetch kube_config
+  ansible.builtin.fetch:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: ~/kube_config
+    mode: "0644"
