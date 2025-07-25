@@ -19,7 +19,7 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_subnet" "test_assignment_subnet" {
     vpc_id = aws_vpc.test_assignment_vpc.id
     count = 2
-    cidr_block = cidrsubnet("10.0.2.0/24", 8, count.index)
+    cidr_block = cidrsubnet("10.0.2.0/8", 8, count.index)
     availability_zone = join("", ["${var.aws_region}", "${var.availability_zones[count.index]}"])
 
     tags = {
