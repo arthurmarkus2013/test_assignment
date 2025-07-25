@@ -94,6 +94,7 @@ resource "aws_vpc_security_group_ingress_rule" "vpc_sg_ssm_ingress_rule" {
 }
 
 resource "aws_key_pair" "ec2_key_pair" {
+    key_name = "ec2_key_pair"
     public_key = file("~/.ssh/id_rsa.pub")
     
     tags = {
@@ -107,6 +108,7 @@ resource "aws_instance" "prometheus_server" {
   instance_type = "t3.micro"
   subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 0)
   associate_public_ip_address = true
+  key_name = aws_key_pair.ec2_key_pair.key_name
 
   tags = {
     Name = "prometheus_server",
@@ -118,6 +120,7 @@ resource "aws_instance" "k3s_server" {
     ami           = "ami-034568121cfdea9c3"
     instance_type = "t3.micro"
     subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 1)
+    key_name = aws_key_pair.ec2_key_pair.key_name
 
     tags = {
         Name = "k3s_server",
@@ -142,6 +145,7 @@ resource "aws_instance" "bastion_server" {
     instance_type = "t3.micro"
     subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 2)
     associate_public_ip_address = true
+    key_name = aws_key_pair.ec2_key_pair.key_name
 
     tags = {
       Name = "bastion_server"
