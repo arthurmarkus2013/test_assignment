@@ -16,7 +16,7 @@ or
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 ```
 
-### 3) Push your docker image to AWS ECR
+### 3) Push your docker image to AWS ECR (optional)
 ```bash
 docker tag <your_image_id> <your_account_id>.dkr.ecr.region.amazonaws.com/<your_repository_name>:<your_tag>
 
