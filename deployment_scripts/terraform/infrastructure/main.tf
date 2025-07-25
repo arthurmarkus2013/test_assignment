@@ -142,19 +142,10 @@ resource "aws_instance" "bastion_server" {
     instance_type = "t3.micro"
     subnet_id = element(aws_subnet.test_assignment_subnet.*.id, 2)
     key_name = "${var.ec2_key_pair_name}"
+    associate_public_ip_address = true
 
     tags = {
         Name = "bastion_server",
         Project = "Test Assignment"
     }
-}
-
-resource "aws_ec2_instance_connect_endpoint" "ec2_connect_endpoint" {
-    subnet_id = element(aws_subnet.test_assignment_subnet.*.id, 2)
-    security_group_ids = [ aws_security_group.test_assignment_sg.id ]
-
-    tags = {
-        Name = "ec2_connect_endpoint",
-        Project = "Test Assignment"
-    }    
 }
