@@ -88,7 +88,7 @@ resource "aws_instance" "bastion_server" {
     subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 2)
 
     tags = {
-      "name" = "bastion_server"
+      "Name" = "bastion_server"
       "project" = "Test Assignment"
     }
 }
