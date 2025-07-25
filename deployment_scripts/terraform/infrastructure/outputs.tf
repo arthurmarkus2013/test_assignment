@@ -12,8 +12,3 @@ output "k3s_server_public_ip" {
     description = "k3s server public ip"
     value = aws_eip.k3s_server_eip.public_ip
 }
-
-output "bastion_server_private_ip" {
-  description = "private ip address of bastion server"
-  value = aws_instance.bastion_server.private_ip
-}
