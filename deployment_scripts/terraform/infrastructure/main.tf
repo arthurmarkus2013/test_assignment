@@ -18,7 +18,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_subnet" "test_assignment_subnet" {
     vpc_id = aws_vpc.test_assignment_vpc.id
-    count = 2
+    count = 3
     cidr_block = cidrsubnet("10.0.2.0/16", 8, count.index)
     availability_zone = join("", ["${var.aws_region}", "${var.availability_zones[count.index]}"])
 
@@ -79,5 +79,16 @@ resource "aws_eip" "k3s_server_eip" {
     tags = {
         Name = "k3s_server_eip",
         Project = "Test Assignment"
+    }
+}
+
+resource "aws_instance" "bastion_server" {
+    ami           = "ami-034568121cfdea9c3"
+    instance_type = "t3.micro"
+    subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 2)
+
+    tags = {
+      "name" = "bastion_server"
+      "project" = "Test Assignment"
     }
 }

@@ -1,7 +1,7 @@
 variable "availability_zones" {
   description = "A list containing 3 AZs"
   type        = list(string)
-  default = [ "a", "b" ]
+  default = [ "a", "b", "c" ]
 }
 
 variable "aws_region" {
