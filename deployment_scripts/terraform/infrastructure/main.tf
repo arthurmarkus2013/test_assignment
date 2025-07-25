@@ -32,6 +32,7 @@ resource "aws_instance" "prometheus_server" {
   ami           = "ami-034568121cfdea9c3"
   instance_type = "t3.micro"
   subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 0)
+  associate_public_ip_address = true
 
   tags = {
     Name = "prometheus_server",
