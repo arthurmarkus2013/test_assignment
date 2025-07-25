@@ -96,8 +96,6 @@ resource "aws_vpc_security_group_egress_rule" "vpc_sg_egress_rule" {
     ip_protocol = "-1"
     cidr_ipv4 = "0.0.0.0/0"
     security_group_id = aws_security_group.test_assignment_sg.id
-    from_port = 0
-    to_port = 0
 }
 
 resource "aws_instance" "prometheus_server" {
