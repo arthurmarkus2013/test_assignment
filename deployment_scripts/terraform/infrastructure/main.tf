@@ -61,12 +61,28 @@ resource "aws_security_group" "test_assignment_sg" {
     }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "vpc_sg_ingress_rule" {
+resource "aws_vpc_security_group_ingress_rule" "vpc_sg_prometheus_ingress_rule" {
+    ip_protocol = "tcp"
+    security_group_id = aws_security_group.test_assignment_sg.id
+    cidr_ipv4 = element(aws_subnet.test_assignment_subnet.*.cidr_block, 0)
+    from_port = 9090
+    to_port = 9090
+}
+
+resource "aws_vpc_security_group_ingress_rule" "vpc_sg_k3s_ingress_rule" {
     ip_protocol = "tcp"
     security_group_id = aws_security_group.test_assignment_sg.id
     cidr_ipv4 = element(aws_subnet.test_assignment_subnet.*.cidr_block, 1)
     from_port = 80
     to_port = 80
+}
+
+resource "aws_vpc_security_group_ingress_rule" "vpc_sg_bastion_ingress_rule" {
+    ip_protocol = "tcp"
+    security_group_id = aws_security_group.test_assignment_sg.id
+    cidr_ipv4 = element(aws_subnet.test_assignment_subnet.*.cidr_block, 2)
+    from_port = 22
+    to_port = 22
 }
 
 resource "aws_instance" "prometheus_server" {
