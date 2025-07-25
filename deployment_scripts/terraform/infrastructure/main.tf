@@ -42,6 +42,14 @@ resource "aws_route_table" "test_assignment_route_table" {
     }
 }
 
+resource "aws_route_table_association" "test_assignment_route_table_association" {
+    route_table_id = aws_route_table.test_assignment_route_table.id
+    count = 3
+    subnet_id = element(aws_subnet.test_assignment_subnet.*.id, count.index)
+    
+    depends_on = [ aws_route_table.test_assignment_route_table ]
+}
+
 resource "aws_security_group" "test_assignment_sg" {
     name = "allow outside access"
     description = "allow outside access to ec2 instances inside assosiated vpc"
