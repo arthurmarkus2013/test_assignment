@@ -28,6 +28,20 @@ resource "aws_subnet" "test_assignment_subnet" {
     }    
 }
 
+resource "aws_route_table" "test_assignment_route_table" {
+    vpc_id = aws_vpc.test_assignment_vpc.id
+
+    route {
+        cidr_block = aws_vpc.test_assignment_vpc.cidr_block
+        gateway_id = aws_internet_gateway.igw.id
+    }
+
+    tags = {
+      Name = "test_assignment_route_table"
+      Project = "Test Assignment"
+    }
+}
+
 resource "aws_security_group" "test_assignment_sg" {
     name = "allow outside access"
     description = "allow outside access to ec2 instances inside assosiated vpc"
