@@ -38,14 +38,7 @@ cd deployment_scripts/ansible/
 ansilbe-playbook -i inventory -l k3s --key-file <path-to-your-key-file> k3s-playbook.yml
 ```
 
-### 6) Deploy the web app to k3s
-```bash
-cd web_app/
-
-kubectl apply -f deploy_to_k8s.yml
-```
-
-### 7) Deploy prometheus
+### 6) Deploy prometheus
 ```bash
 cd deployment_scripts/ansible/
 
@@ -54,6 +47,13 @@ ansilbe-playbook -i inventory -l prometheus --key-file <path-to-your-key-file> p
 P. S. This playbook would as you for the URL of the deployed webapp
 
 `And don't forget to remove everything after trying out, in order to avoid unexpected charges!!!`
+
+### 7) Deploy the web app to k3s
+```bash
+cd web_app/
+
+kubectl apply -f deploy_to_k8s.yml
+```
 
 ## Closing thoughts
 
