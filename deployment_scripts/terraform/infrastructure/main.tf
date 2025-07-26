@@ -150,7 +150,7 @@ resource "aws_vpc_security_group_egress_rule" "vpc_bastion_sg_egress_rule" {
 
 resource "aws_instance" "prometheus_server" {
   ami           = "ami-034568121cfdea9c3"
-  instance_type = "t3.micro"
+  instance_type = "t3.medium"
   subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 0)
   associate_public_ip_address = true
   key_name = "${var.ec2_key_pair_name}"
@@ -164,7 +164,7 @@ resource "aws_instance" "prometheus_server" {
 
 resource "aws_instance" "k3s_server" {
     ami           = "ami-034568121cfdea9c3"
-    instance_type = "t3.micro"
+    instance_type = "t3.medium"
     subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 1)
     key_name = "${var.ec2_key_pair_name}"
     vpc_security_group_ids = [ aws_security_group.test_assignment_web_server_sg.id ]
