@@ -1,30 +1,18 @@
 ---
-- name: Create group for k3s
-  ansible.builtin.group:
-    name: k3s
-    state: present
-
-- name: Create a user for k3s
-  ansible.builtin.user:
-    name: k3s
-    group: k3s
-    create_home: false
-    shell: /bin/false
-
 - name: Create k3s config folder
   ansible.builtin.file:
     path: /etc/rancher/k3s/
     state: directory
-    owner: k3s
-    group: k3s
+    owner: root
+    group: root
     mode: "0755"
 
 - name: Create k3s data folder
   ansible.builtin.file:
     path: /var/lib/rancher/k3s
     state: directory
-    owner: k3s
-    group: k3s
+    owner: root
+    group: root
     mode: "0755"
 
 - name: Download K3s
@@ -38,16 +26,16 @@
     remote_src: true
     src: /tmp/k3s
     dest: /usr/local/bin/k3s
-    owner: k3s
-    group: k3s
+    owner: root
+    group: root
     mode: "0755"
 
 - name: Copy k3s config file
   ansible.builtin.copy:
     src: config.yaml
     dest: /etc/rancher/k3s/config.yaml
-    owner: k3s
-    group: k3s
+    owner: root
+    group: root
     mode: "0644"
 
 - name: Copy k3s systemd file
