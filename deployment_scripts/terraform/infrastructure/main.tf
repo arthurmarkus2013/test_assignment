@@ -114,7 +114,7 @@ resource "aws_instance" "prometheus_server" {
   subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 0)
   associate_public_ip_address = true
   key_name = "${var.ec2_key_pair_name}"
-  security_groups = [ aws_security_group.test_assignment_sg ]
+  security_groups = [ aws_security_group.test_assignment_sg.name ]
 
   tags = {
     Name = "prometheus_server",
@@ -127,7 +127,7 @@ resource "aws_instance" "k3s_server" {
     instance_type = "t3.micro"
     subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 1)
     key_name = "${var.ec2_key_pair_name}"
-    security_groups = [ aws_security_group.test_assignment_sg ]
+    security_groups = [ aws_security_group.test_assignment_sg.name ]
 
     tags = {
         Name = "k3s_server",
@@ -153,7 +153,7 @@ resource "aws_instance" "bastion_server" {
     subnet_id = element(aws_subnet.test_assignment_subnet.*.id, 2)
     key_name = "${var.ec2_key_pair_name}"
     associate_public_ip_address = true
-    security_groups = [ aws_security_group.test_assignment_sg ]
+    security_groups = [ aws_security_group.test_assignment_sg.name ]
 
     tags = {
         Name = "bastion_server",
