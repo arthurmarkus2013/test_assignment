@@ -33,6 +33,14 @@
     dest: /tmp/prometheus.tar.gz
     mode: "0644"
 
+- name: Create a temp folder
+  ansible.builtin.file:
+    path: /tmp/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: "0755"
+
 - name: Extract prometheus archive
   ansible.builtin.unarchive:
     remote_src: true
