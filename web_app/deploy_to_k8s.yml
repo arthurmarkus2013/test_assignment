@@ -30,9 +30,10 @@ kind: Service
 metadata:
   name: simple-web-app-svc
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: simple-web-app
   ports:
   - port: 80
     targetPort: 8080
+    nodePort: 30001
