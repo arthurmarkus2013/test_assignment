@@ -30,6 +30,7 @@ kind: Service
 metadata:
   name: simple-web-app-svc
 spec:
+  type: LoadBalancer
   selector:
     app: simple-web-app
   ports:
