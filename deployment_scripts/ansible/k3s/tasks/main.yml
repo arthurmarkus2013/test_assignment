@@ -27,6 +27,7 @@
 
 - name: Move k3s executable
   ansible.builtin.copy:
+    remote_src: true
     src: /tmp/k3s
     dest: /usr/local/bin/k3s
     owner: k3s
