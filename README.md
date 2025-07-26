@@ -16,27 +16,40 @@ terraform apply
 P. S. Make note of the scripts output
 `The provisioning script will ask for the name of the key-pair, that's needed for ssh access. This key-pair MUST already exist in your AWS account!`
 
-### 2) Modify the inventory file in `ansible` folder to point to the correct IPs
+### 2) SSH into the Bastion server
+`The following steps have to be ran from within a Bastion server`
 
-### 3) Depoy k3s
+### 3) Copy the PEM file (that you've used for SSH in the previous step) into the Bastion server
+`You'll need to provide that file to Ansible in the following steps`
+
+`You can simply copy-paste the contents of the PEM file into a new file, that you create on-the-fly on the server`
+
+### 4) Modify the inventory file in `ansible` folder to point to the correct IPs
 ```bash
 cd deployment_scripts/ansible/
 
-ansilbe-playbook -i inventory -l k3s k3s-playbook.yml
+vi inventory
 ```
 
-### 4) Deploy the web app to k3s
+### 5) Depoy k3s
+```bash
+cd deployment_scripts/ansible/
+
+ansilbe-playbook -i inventory -l k3s --key-file <path-to-your-key-file> k3s-playbook.yml
+```
+
+### 6) Deploy the web app to k3s
 ```bash
 cd web_app/
 
 kubectl apply -f deploy_to_k8s.yml
 ```
 
-### 5) Deploy prometheus
+### 7) Deploy prometheus
 ```bash
 cd deployment_scripts/ansible/
 
-ansilbe-playbook -i inventory -l prometheus prometheus-playbook.yml
+ansilbe-playbook -i inventory -l prometheus --key-file <path-to-your-key-file> prometheus-playbook.yml
 ```
 P. S. This playbook would as you for the URL of the deployed webapp
 
