@@ -5,8 +5,8 @@ After=network-online.target
 
 
 [Service]
-User=prometheus
-Group=prometheus
+User=root
+Group=root
 Type=simple
 ExecStart=/usr/local/bin/prometheus \
   --config.file=/etc/prometheus/prometheus.yml \
