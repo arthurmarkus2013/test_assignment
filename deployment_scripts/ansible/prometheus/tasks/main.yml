@@ -49,6 +49,7 @@
 
 - name: Move prometheus executable
   ansible.builtin.copy:
+    remote_src: true
     src: /tmp/prometheus/prometheus
     dest: /usr/local/bin/prometheus
     owner: prometheus
@@ -57,6 +58,7 @@
 
 - name: Move promtool cli utility
   ansible.builtin.copy:
+    remote_src: true
     src: /tmp/prometheus/promtool
     dest: /usr/local/bin/promtool
     owner: prometheus
