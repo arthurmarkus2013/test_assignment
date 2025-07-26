@@ -52,12 +52,32 @@ resource "aws_route_table_association" "test_assignment_route_table_association"
     depends_on = [ aws_route_table.test_assignment_route_table ]
 }
 
-resource "aws_security_group" "test_assignment_sg" {
-    name = "test_assignment_sg"
+resource "aws_security_group" "test_assignment_web_server_sg" {
+    name = "test_assignment_web_server_sg"
     vpc_id = aws_vpc.test_assignment_vpc.id
 
     tags = {
-      "name" = "test_assignment_sg"
+      "name" = "test_assignment_web_server_sg"
+      "project" = "Test Assignment"
+    }
+}
+
+resource "aws_security_group" "test_assignment_prometheus_sg" {
+    name = "test_assignment_prometheus_sg"
+    vpc_id = aws_vpc.test_assignment_vpc.id
+
+    tags = {
+      "name" = "test_assignment_prometheus_sg"
+      "project" = "Test Assignment"
+    }
+}
+
+resource "aws_security_group" "test_assignment_bastion_sg" {
+    name = "test_assignment_bastion_sg"
+    vpc_id = aws_vpc.test_assignment_vpc.id
+
+    tags = {
+      "name" = "test_assignment_bastion_sg"
       "project" = "Test Assignment"
     }
 }
@@ -65,7 +85,7 @@ resource "aws_security_group" "test_assignment_sg" {
 resource "aws_vpc_security_group_ingress_rule" "prometheus_sg_ingress_rule" {
     ip_protocol = "tcp"
     cidr_ipv4 = "10.0.0.0/16"
-    security_group_id = aws_security_group.test_assignment_sg.id
+    security_group_id = aws_security_group.test_assignment_prometheus_sg.id
     from_port = 9090
     to_port = 9090  
 }
@@ -73,15 +93,31 @@ resource "aws_vpc_security_group_ingress_rule" "prometheus_sg_ingress_rule" {
 resource "aws_vpc_security_group_ingress_rule" "web_server_sg_ingress_rule" {
     ip_protocol = "tcp"
     cidr_ipv4 = "0.0.0.0/0"
-    security_group_id = aws_security_group.test_assignment_sg.id
+    security_group_id = aws_security_group.test_assignment_web_server_sg.id
     from_port = 80
     to_port = 80    
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ssh_sg_ingress_rule" {
+resource "aws_vpc_security_group_ingress_rule" "ssh_web_server_sg_ingress_rule" {
+    ip_protocol = "tcp"
+    cidr_ipv4 = "10.0.0.0/16"
+    security_group_id = aws_security_group.test_assignment_web_server_sg.id
+    from_port = 22
+    to_port = 22    
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ssh_prometheus_sg_ingress_rule" {
+    ip_protocol = "tcp"
+    cidr_ipv4 = "10.0.0.0/16"
+    security_group_id = aws_security_group.test_assignment_prometheus_sg.id
+    from_port = 22
+    to_port = 22    
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ssh_bastion_sg_ingress_rule" {
     ip_protocol = "tcp"
     cidr_ipv4 = "0.0.0.0/0"
-    security_group_id = aws_security_group.test_assignment_sg.id
+    security_group_id = aws_security_group.test_assignment_bastion_sg.id
     from_port = 22
     to_port = 22    
 }
@@ -89,23 +125,27 @@ resource "aws_vpc_security_group_ingress_rule" "ssh_sg_ingress_rule" {
 resource "aws_vpc_security_group_ingress_rule" "api_service_sg_ingress_rule" {
     ip_protocol = "tcp"
     cidr_ipv4 = "10.0.0.0/16"
-    security_group_id = aws_security_group.test_assignment_sg.id
+    security_group_id = aws_security_group.test_assignment_web_server_sg.id
     from_port = 6443
     to_port = 6443    
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ssm_sg_ingress_rule" {
-    ip_protocol = "tcp"
-    cidr_ipv4 = "0.0.0.0/0"
-    security_group_id = aws_security_group.test_assignment_sg.id
-    from_port = 443
-    to_port = 443
-}
-
-resource "aws_vpc_security_group_egress_rule" "vpc_sg_egress_rule" {
+resource "aws_vpc_security_group_egress_rule" "vpc_web_server_sg_egress_rule" {
     ip_protocol = "-1"
     cidr_ipv4 = "0.0.0.0/0"
-    security_group_id = aws_security_group.test_assignment_sg.id
+    security_group_id = aws_security_group.test_assignment_web_server_sg.id
+}
+
+resource "aws_vpc_security_group_egress_rule" "vpc_prometheus_sg_egress_rule" {
+    ip_protocol = "-1"
+    cidr_ipv4 = "0.0.0.0/0"
+    security_group_id = aws_security_group.test_assignment_prometheus_sg.id
+}
+
+resource "aws_vpc_security_group_egress_rule" "vpc_bastion_sg_egress_rule" {
+    ip_protocol = "-1"
+    cidr_ipv4 = "0.0.0.0/0"
+    security_group_id = aws_security_group.test_assignment_bastion_sg.id
 }
 
 resource "aws_instance" "prometheus_server" {
@@ -114,6 +154,7 @@ resource "aws_instance" "prometheus_server" {
   subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 0)
   associate_public_ip_address = true
   key_name = "${var.ec2_key_pair_name}"
+  vpc_security_group_ids = [ aws_security_group.test_assignment_prometheus_sg.id ]
 
   tags = {
     Name = "prometheus_server",
@@ -126,6 +167,7 @@ resource "aws_instance" "k3s_server" {
     instance_type = "t3.micro"
     subnet_id     = element(aws_subnet.test_assignment_subnet.*.id, 1)
     key_name = "${var.ec2_key_pair_name}"
+    vpc_security_group_ids = [ aws_security_group.test_assignment_web_server_sg.id ]
 
     tags = {
         Name = "k3s_server",
@@ -151,6 +193,7 @@ resource "aws_instance" "bastion_server" {
     subnet_id = element(aws_subnet.test_assignment_subnet.*.id, 2)
     key_name = "${var.ec2_key_pair_name}"
     associate_public_ip_address = true
+    vpc_security_group_ids = [ aws_security_group.test_assignment_bastion_sg.id ]
 
     tags = {
         Name = "bastion_server",
