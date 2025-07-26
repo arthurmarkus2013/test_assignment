@@ -14,8 +14,9 @@ terraform init
 terraform apply
 ```
 P. S. Make note of the scripts output
+`The provisioning script will ask for the name of the key-pair, that's needed for ssh access. This key-pair MUST already exist in your AWS account!`
 
-### 2) Modify the inventory file in `ansible` folder to point ti the correct IPs
+### 2) Modify the inventory file in `ansible` folder to point to the correct IPs
 
 ### 3) Depoy k3s
 ```bash
@@ -40,3 +41,14 @@ ansilbe-playbook -i inventory -l prometheus prometheus-playbook.yml
 P. S. This playbook would as you for the URL of the deployed webapp
 
 `And don't forget to remove everything after trying out, in order to avoid unexpected charges!!!`
+
+## Closing thoughts
+
+- For this test assignment I made the prometheus server (port 9090) publicly accessable, since that way it's easier to access, but in a real production environment access to it absolutely must be restricted
+- The web server is accessible publicly on port 80, as required by the assignment
+- In odrer to furfill the static-IP requirement (according to my understanding of it) I've decided to not deploy an EKS Cluster, but rather deploy k3s on an EC2 Instance, to which I've assigned an Elastic IP
+- For deployment purposes (with Ansible) port 22 had to be made open on all servers: publicly on a Bastion server and only within the vpc on other two servers
+- In order to not expose any additional ports publicly on prometheus and web servers, a Bastion server had to be created
+- For managing the infrastructure with terraform I've personally decided to use AWS CloudShell to run the scripts
+- For hosting a pre-built Docker Image I've decided to use AWS Public ECR for no particular reason
+- The web app itself I've decided to implement in GoLang, because to me it seemed to be the easiest and fastest way to implement a simple example app (with minimal friction)
