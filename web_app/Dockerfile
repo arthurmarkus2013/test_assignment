@@ -12,7 +12,11 @@ FROM alpine:latest
 
 WORKDIR /app
 
+RUN apk add --no-cache tzdata
+
 COPY --from=build /app/simple-web-app simple-web-app
+COPY --from=build /app/gandalf.webp gandalf.webp
+COPY --from=build /app/index.tmpl index.tmpl
 
 EXPOSE 8080
 
