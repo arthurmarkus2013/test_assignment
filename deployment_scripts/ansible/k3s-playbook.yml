@@ -1,4 +1,5 @@
 ---
 - hosts: k3s
+  become: root
   roles:
     - k3s

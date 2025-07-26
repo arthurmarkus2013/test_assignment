@@ -1,4 +1,5 @@
 ---
 - hosts: prometheus
+  become: root
   roles:
     - prometheus
