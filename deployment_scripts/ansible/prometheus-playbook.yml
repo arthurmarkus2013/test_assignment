@@ -1,5 +1,9 @@
 ---
 - hosts: prometheus
   become: true
+  vars_prompt:
+    - name: web_app_url
+      prompt: What is the URL of the deployed web app?
+      private: false
   roles:
     - prometheus

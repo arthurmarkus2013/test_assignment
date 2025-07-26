@@ -1,10 +1,4 @@
 ---
-- name: Get web app url
-  vars_prompt:
-    - name: web_app_url
-      prompt: What is the URL of the deployed web app?
-      private: false
-
 - name: Create group for prometheus
   ansible.builtin.group:
     name: prometheus
