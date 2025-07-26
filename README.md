@@ -44,7 +44,7 @@ cd deployment_scripts/ansible/
 
 ansilbe-playbook -i inventory -l prometheus --key-file <path-to-your-key-file> prometheus-playbook.yml
 ```
-P. S. This playbook would as you for the URL of the deployed webapp
+P. S. This playbook would ask you for the URL of the webapp (IP-Address of the k3s server, private IP-Address should work in this case)
 
 `And don't forget to remove everything after trying out, in order to avoid unexpected charges!!!`
 
