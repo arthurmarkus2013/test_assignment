@@ -19,6 +19,14 @@
     group: k3s
     mode: "0755"
 
+- name: Create k3s data folder
+  ansible.builtin.file:
+    path: /var/lib/rancher/k3s
+    state: directory
+    owner: k3s
+    group: k3s
+    mode: "0755"
+
 - name: Download K3s
   ansible.builtin.get_url:
     url: https://github.com/k3s-io/k3s/releases/download/v1.33.1%2Bk3s1/k3s
